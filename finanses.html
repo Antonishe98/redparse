@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+    <!-- Semantic UI -->
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.css"/>
+
+    <title>Автопарсер - быстрый способ для seo-наполнения</title>
+    <style type="text/css">
+        :focus {
+            outline: none;
+        }
+        .row {
+            margin-right: 0;
+            margin-left: 0;
+        }
+        /*
+            Sometimes the sub menus get too large for the page and prevent the menu from scrolling, limiting functionality
+            A quick fix is to change .side-menu to
+
+            -> position:absolute
+
+            and uncomment the code below.
+            You also need to uncomment
+
+            -> <div class="absolute-wrapper"> </div> in the html file
+
+            you also need to tweek the animation. Just uncomment the code in that section
+            --------------------------------------------------------------------------------------------------------------------
+            If you want to make it really neat i suggest you look into an alternative like http://areaaperta.com/nicescroll/
+            This will allow the menu to say fixed on body scoll and scoll on the side bar if it get to large
+        */
+        /*.absolute-wrapper{
+            position: fixed;
+            width: 300px;
+            height: 100%;
+            background-color: #f8f8f8;
+            border-right: 1px solid #e7e7e7;
+        }*/
+
+        .side-menu {
+            position: fixed;
+            width: 130px;
+            height: 100%;
+            font-size: 20px;
+            /*background-color: #5B636B;*/
+            background-color: #525460;
+            border-right: 1px solid #e7e7e7;
+        }
+        .side-menu .navbar {
+            border: none;
+        }
+        .side-menu .navbar-header {
+            width: 100%;
+            background-color: #3080e8;
+        }
+        .side-menu .navbar-header a {
+            color: white;
+        }
+        .side-menu .navbar-nav .active a {
+            background:#41424b;
+            color: white;
+            margin-right: -1px;
+            border-right: 5px solid #fdb303;
+        }
+        .side-menu .navbar-nav .active a:hover {
+            background:#41424b;
+            color: white;
+        }
+        .side-menu .navbar-nav li {
+            display: block;
+            width: 100%;
+            background-color: #5B636B;
+        }
+        .side-menu .navbar-nav li a {
+            padding: 15px;
+            color: white;
+        }
+        .side-menu .navbar-nav li a:hover {
+            background-color: #41424b;
+            color: white;
+        }
+        .side-menu .navbar-nav li a .glyphicon {
+            padding-right: 10px;
+        }
+        .side-menu #dropdown {
+            border: 0;
+            margin-bottom: 0;
+            border-radius: 0;
+            background-color: transparent;
+            box-shadow: none;
+        }
+        .side-menu #dropdown .caret {
+            float: right;
+            margin: 9px 5px 0;
+        }
+        .side-menu #dropdown .indicator {
+            float: right;
+        }
+        .side-menu #dropdown > a {
+            border-bottom: 1px solid #e7e7e7;
+        }
+        .side-menu #dropdown .panel-body {
+            padding: 0;
+            background-color: #f3f3f3;
+        }
+        .side-menu #dropdown .panel-body .navbar-nav {
+            width: 100%;
+        }
+        .side-menu #dropdown .panel-body .navbar-nav li {
+            padding-left: 15px;
+            border-bottom: 1px solid #e7e7e7;
+        }
+        .side-menu #dropdown .panel-body .navbar-nav li:last-child {
+            border-bottom: none;
+        }
+        .side-menu #dropdown .panel-body .panel > a {
+            margin-left: -20px;
+            padding-left: 35px;
+        }
+        .side-menu #dropdown .panel-body .panel-body {
+            margin-left: -15px;
+        }
+        .side-menu #dropdown .panel-body .panel-body li {
+            padding-left: 30px;
+        }
+        .side-menu #dropdown .panel-body .panel-body li:last-child {
+            border-bottom: 1px solid #e7e7e7;
+        }
+        .side-menu #search-trigger {
+            background-color: #f3f3f3;
+            border: 0;
+            border-radius: 0;
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 15px 18px;
+        }
+        .side-menu .brand-name-wrapper {
+            min-height: 50px;
+        }
+        .side-menu .brand-name-wrapper .navbar-brand {
+            display: block;
+        }
+        .side-menu #search {
+            position: relative;
+            z-index: 1000;
+        }
+        .side-menu #search .panel-body {
+            padding: 0;
+        }
+        .side-menu #search .panel-body .navbar-form {
+            padding: 0;
+            padding-right: 50px;
+            width: 100%;
+            margin: 0;
+            position: relative;
+            border-top: 1px solid #e7e7e7;
+        }
+        .side-menu #search .panel-body .navbar-form .form-group {
+            width: 100%;
+            position: relative;
+        }
+        .side-menu #search .panel-body .navbar-form input {
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+            width: 100%;
+            height: 50px;
+        }
+        .side-menu #search .panel-body .navbar-form .btn {
+            position: absolute;
+            right: 0;
+            top: 0;
+            border: 0;
+            border-radius: 0;
+            background-color: #f3f3f3;
+            padding: 15px 18px;
+        }
+        /* Main body section */
+        .side-body {
+            margin-left: 130px;
+            background-color: #F7F7F7;
+        }
+        /* small screen */
+        @media (max-width: 768px) {
+            .side-menu {
+                position: relative;
+                width: 100%;
+                height: 0;
+                border-right: 0;
+                border-bottom: 1px solid #e7e7e7;
+            }
+            .side-menu .brand-name-wrapper .navbar-brand {
+                display: inline-block;
+            }
+            /* Slide in animation */
+            @-moz-keyframes slidein {
+                0% {
+                    left: -300px;
+                }
+                100% {
+                    left: 10px;
+                }
+            }
+            @-webkit-keyframes slidein {
+                0% {
+                    left: -300px;
+                }
+                100% {
+                    left: 10px;
+                }
+            }
+            @keyframes slidein {
+                0% {
+                    left: -300px;
+                }
+                100% {
+                    left: 10px;
+                }
+            }
+            @-moz-keyframes slideout {
+                0% {
+                    left: 0;
+                }
+                100% {
+                    left: -300px;
+                }
+            }
+            @-webkit-keyframes slideout {
+                0% {
+                    left: 0;
+                }
+                100% {
+                    left: -300px;
+                }
+            }
+            @keyframes slideout {
+                0% {
+                    left: 0;
+                }
+                100% {
+                    left: -300px;
+                }
+            }
+            /* Slide side menu*/
+            .side-menu-container {
+                background: red;
+            }
+            /* Add .absolute-wrapper.slide-in for scrollable menu -> see top comment */
+            .side-menu-container > .navbar-nav.slide-in {
+                -moz-animation: slidein 300ms forwards;
+                -o-animation: slidein 300ms forwards;
+                -webkit-animation: slidein 300ms forwards;
+                animation: slidein 300ms forwards;
+                -webkit-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+            }
+            .side-menu-container > .navbar-nav {
+                /* Add position:absolute for scrollable menu -> see top comment */
+                position: fixed;
+                left: -300px;
+                width: 300px;
+                top: 43px;
+                height: 100%;
+                border-right: 1px solid #e7e7e7;
+                background-color: #f8f8f8;
+                -moz-animation: slideout 300ms forwards;
+                -o-animation: slideout 300ms forwards;
+                -webkit-animation: slideout 300ms forwards;
+                animation: slideout 300ms forwards;
+                -webkit-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+            }
+            /* Uncomment for scrollable menu -> see top comment */
+            /*.absolute-wrapper{
+                  width:285px;
+                  -moz-animation: slideout 300ms forwards;
+                  -o-animation: slideout 300ms forwards;
+                  -webkit-animation: slideout 300ms forwards;
+                  animation: slideout 300ms forwards;
+                  -webkit-transform-style: preserve-3d;
+                  transform-style: preserve-3d;
+              }*/
+            @-moz-keyframes bodyslidein {
+                0% {
+                    left: 0;
+                }
+                100% {
+                    left: 300px;
+                }
+            }
+            @-webkit-keyframes bodyslidein {
+                0% {
+                    left: 0;
+                }
+                100% {
+                    left: 300px;
+                }
+            }
+            @keyframes bodyslidein {
+                0% {
+                    left: 0;
+                }
+                100% {
+                    left: 300px;
+                }
+            }
+            @-moz-keyframes bodyslideout {
+                0% {
+                    left: 300px;
+                }
+                100% {
+                    left: 0;
+                }
+            }
+            @-webkit-keyframes bodyslideout {
+                0% {
+                    left: 300px;
+                }
+                100% {
+                    left: 0;
+                }
+            }
+            @keyframes bodyslideout {
+                0% {
+                    left: 300px;
+                }
+                100% {
+                    left: 0;
+                }
+            }
+            /* Slide side body*/
+            .side-body {
+                margin-left: 5px;
+                margin-top: 70px;
+                position: relative;
+                -moz-animation: bodyslideout 300ms forwards;
+                -o-animation: bodyslideout 300ms forwards;
+                -webkit-animation: bodyslideout 300ms forwards;
+                animation: bodyslideout 300ms forwards;
+                -webkit-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+            }
+            .body-slide-in {
+                -moz-animation: bodyslidein 300ms forwards;
+                -o-animation: bodyslidein 300ms forwards;
+                -webkit-animation: bodyslidein 300ms forwards;
+                animation: bodyslidein 300ms forwards;
+                -webkit-transform-style: preserve-3d;
+                transform-style: preserve-3d;
+            }
+            /* Hamburger */
+            .navbar-toggle {
+                border: 0;
+                float: left;
+                padding: 18px;
+                margin: 0;
+                border-radius: 0;
+                background-color: #f3f3f3;
+            }
+            /* Search */
+            #search .panel-body .navbar-form {
+                border-bottom: 0;
+            }
+            #search .panel-body .navbar-form .form-group {
+                margin: 0;
+            }
+            .navbar-header {
+                /* this is probably redundant */
+                position: fixed;
+                z-index: 3;
+                background-color: #f8f8f8;
+            }
+            /* Dropdown tweek */
+            #dropdown .panel-body .navbar-nav {
+                margin: 0;
+            }
+        }
+        .parse .title {
+            background-color: #E9E9E9;
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+        .parser {
+            overflow: auto; /* Добавляем полосы прокрутки */
+            height: 100%;
+        }
+        .sellect {
+            padding-top: 140px;
+            padding-bottom: 30%;
+            background: linear-gradient(to right, #FF4C5B, #F9533B);
+            color: white;
+        }
+        .sellect p {
+            font-size: 30px;
+            margin-bottom: 30px;
+        }
+        .sellect input, .btn-default, .btn-default {
+            height: 60px;
+            font-size: 20px;
+        }
+        .btn-default, .btn-default {
+            background: #436BED;
+            border-color: #436BED;
+            color: white;
+        }
+        .btn-default:hover, .btn-default:hover {
+            background: #3d5fce;
+            border-color: #3d5fce;
+            color: white;
+        }
+         a.btn-default {
+            padding-top: 12px;
+        }
+        /*Show bar*/
+        .show_bar {
+            padding: 20px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #E9E9E9;
+            display: none;
+        }
+
+        .show_bar .button {
+            margin-top: 18px;
+        }
+        .show_bar .col-md-3 {
+            margin-right: 0px;
+        }
+        .show_bar .col-md-2 {
+            margin-left: -3.3%;
+        }
+        .show_bar .col-md-3 #selector__second {
+            border-top-right-radius: 0px;
+            border-bottom-right-radius: 0px;
+        }
+        .show_bar .col-md-2 .button {
+            margin-top: 21px;
+            background-color: orangered;
+            height: 38px;
+            border-top-left-radius: 0px;
+            border-bottom-left-radius: 0px;
+        }
+        .content {
+            padding-top: 35px;
+            padding-bottom: 35px;
+        }
+        .content .col-md-6 {
+            padding-bottom: 20px;
+            border-radius: 5px;
+            background-color: #3080E8;
+        }
+        .content .col-md-6 p {
+            color: white;
+            font-size: 21px;
+        }
+        .content .col-md-6 h2 {
+            padding-top: 20px;
+            padding-bottom: 2px;
+            color: white;
+        }
+        .orders {
+            padding-top: 20px;
+            padding-bottom: 20px;
+            color: white;
+            background-color: #53687D;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="row">
+    <!-- uncomment code for absolute positioning tweek see top comment in css -->
+    <!-- <div class="absolute-wrapper"> </div> -->
+    <!-- Menu -->
+    <div class="side-menu">
+
+        <nav class="navbar navbar-default" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <div class="brand-wrapper">
+                    <!-- Hamburger -->
+                    <button type="button" class="navbar-toggle">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+
+                    <!-- Brand -->
+                    <div class="brand-name-wrapper">
+                        <a class="navbar-brand" href="#">
+                            Brand
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Main Menu -->
+            <div class="side-menu-container">
+                <ul class="nav navbar-nav">
+
+                    <li><a href="#"><center><span class="glyphicon glyphicon-user"></span><p>Аккаунт</p></center></a></li>
+                    <li class="active"><a href="#"><center><span class="glyphicon glyphicon-credit-card"></span><p>Финансы</p></center></a></li>
+                    <li><a href="#"><center><span class="glyphicon glyphicon-floppy-disk"></span><p>Хроника</p></center></a></li>
+                    <li><a href="#"><center><span class="glyphicon glyphicon-dashboard"></span><p>Парсер</p></center></a></li>
+                    <li><a href="#"><center><span class="glyphicon glyphicon-cog"></span><p>Настройки</p></center></a></li>
+
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </nav>
+
+    </div>
+    <!-- Main Content -->
+    <div class="contenter" style = "background: white">
+        <div class="side-body">
+            <div class="balanse">
+                <div class="sellect">
+                      <div class ="col-md-4 col-md-offset-4">
+                        <center>
+                            <i class ="glyphicon glyphicon-credit-card" style = "font-size:100px;"></i>
+                            <p><b>Ваши финансы</b></p>
+                            <a href = "#content" class="btn btn-default">Посмотреть</a>
+                        </center>
+                      </div>
+                </div>
+                <div class="content" id = "content">
+                    <div class="container">
+                        <div class="col-md-6 col-md-offset-3">
+                            <center>
+                                <h2>Ваш баланас</h2>
+                                <hr  noshade size="5">
+                            </center>
+                            <div class="col-md-6">
+                                <center>
+                                    <b><h3>Средств сейчас:</h3></b>
+                                <p>$120</p>
+                                </center>
+                                <center>
+                                    <b><h3>Возвраты:</h3></b>
+                                    <p>$0</p>
+                                </center>
+                            </div>
+                            <div class="col-md-6">
+                                <center>
+                                    <b><h3>Списано для заказов:</h3></b>
+                                    <p>$10</p>
+                                </center>
+                                <center>
+                                    <b><h3>Поступило за месяц:</h3></b>
+                                    <p>$130</p>
+                                </center>
+                            </div>
+                        </div>
+                    </div>
+                    <p>
+                      <center>
+                        <a href = "#content" class="btn btn-default"><i class="glyphicon glyphicon-piggy-bank"></i>  Пополнить</a>
+                      </center>
+                    </p>
+                </div>
+                <div class="orders">
+                    <div class="container">
+                        <center>
+                            <h2><b>Ваши заказы</b></h2>
+                        </center>
+                        <div id="test-list">
+                            <input type="text" class="search" />
+                            <ul class="list">
+                                <li><p class="name">Guybrush Threepwood</p></li>
+                                <li><p class="name">Elaine Marley</p></li>
+                                <li><p class="name">LeChuck</p></li>
+                                <li><p class="name">Stan</p></li>
+                                <li><p class="name">Voodoo Lady</p></li>
+                                <li><p class="name">Herman Toothrot</p></li>
+                                <li><p class="name">Meathook</p></li>
+                                <li><p class="name">Carla</p></li>
+                                <li><p class="name">Otis</p></li>
+                                <li><p class="name">Rapp Scallion</p></li>
+                                <li><p class="name">Rum Rogers Sr.</p></li>
+                                <li><p class="name">Men of Low Moral Fiber</p></li>
+                                <li><p class="name">Murray</p></li>
+                                <li><p class="name">Cannibals</p></li>
+                            </ul>
+                            <ul class="pagination"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="http://listjs.com/no-cdn/list.js"></script>
+<script src="http://listjs.com/no-cdn/list.pagination.js"></script>
+<script>
+    var monkeyList = new List('test-list', {
+        valueNames: ['name'],
+        page: 3,
+        plugins: [ ListPagination({}) ]
+    });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/1.11.8/semantic.min.js"></script>
+<script>
+    $('#selector__first').dropdown();
+    $('#selector__second').dropdown();
+</script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+</html>
